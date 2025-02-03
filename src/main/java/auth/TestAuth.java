@@ -5,7 +5,7 @@ import models.User;
 public class TestAuth {
     public static void main(String[] args) {
         // 🔹 Test de l'inscription
-        boolean isRegistered = AuthService.registerUser("test@example.com", "TestUser", "password123");
+        boolean isRegistered = AuthService.registerUser("test@example.com", "TestUser", "password123", "EMPLOYE");
         if (isRegistered) {
             System.out.println("Utilisateur inscrit avec succès !");
         } else {

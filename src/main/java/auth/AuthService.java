@@ -28,27 +28,33 @@ package auth;
                 }
 
                 // Inscription d'un utilisateur
-                public static boolean registerUser(String email, String pseudo, String password) {
+                public static boolean registerUser(String email, String pseudo, String password, String role) {
                     if (!isEmailWhitelisted(email)) {
                         System.err.println("Erreur : L'adresse e-mail n'est pas whitelistée.");
                         return false;
                     }
 
+                    if (!role.equals("EMPLOYE") && !role.equals("ADMIN")) {
+                        System.err.println("Erreur : Rôle invalide.");
+                        return false;
+                    }
+
                     String hashedPassword = hashPassword(password);
-                    String sql = "INSERT INTO users (email, pseudo, password, role) VALUES (?, ?, ?, 'EMPLOYE')";
+                    String sql = "INSERT INTO users (email, pseudo, password, role) VALUES (?, ?, ?, ?)";
 
                     try (Connection conn = DatabaseManager.getConnection();
                          PreparedStatement stmt = conn.prepareStatement(sql)) {
                         stmt.setString(1, email);
                         stmt.setString(2, pseudo);
                         stmt.setString(3, hashedPassword);
-                        int rowsInserted = stmt.executeUpdate();
-                        return rowsInserted > 0;
+                        stmt.setString(4, role);
+                        return stmt.executeUpdate() > 0;
                     } catch (SQLException e) {
                         System.err.println("Erreur lors de l'inscription : " + e.getMessage());
                         return false;
                     }
                 }
+
 
                 // Connexion d'un utilisateur
                 public static User loginUser(String email, String password) {
