@@ -3,12 +3,12 @@ import services.UserService;
 import auth.AuthService;
 import services.StoreService;
 import services.InventoryService;
+import models.Inventory;
+import models.Item;
 
 import java.util.Scanner;
 
 public class Main {
-    private static int currentStoreId = 1; // Initialiser avec le premier storeId
-
     public static void main(String[] args) {
         AuthService.createDefaultAdmin();
         Scanner scanner = new Scanner(System.in);
@@ -23,7 +23,9 @@ public class Main {
             System.out.println("6. Créer un magasin");
             System.out.println("7. Créer un article");
             System.out.println("8. Supprimer un article");
-            System.out.println("9. Quitter");
+            System.out.println("9. Consulter l'inventaire");
+            System.out.println("10. Mettre à jour la quantité d'un article");
+            System.out.println("11. Quitter");
             System.out.print("Choisissez une option : ");
 
             int choice = scanner.nextInt();
@@ -74,37 +76,83 @@ public class Main {
                     System.out.println(deleted ? "Suppression réussie." : "Échec de la suppression.");
                     break;
                 case 5:
-                    System.out.print("Entrez l'email à whitelister : ");
-                    String whitelistEmail = scanner.nextLine();
-                    boolean whitelisted = AuthService.whitelistEmail(whitelistEmail);
-                    System.out.println(whitelisted ? "Email whitelisted avec succès." : "Échec du whitelisting.");
+                    System.out.print("Entrez votre ID : ");
+                    int whitelistRequesterId = scanner.nextInt();
+                    scanner.nextLine(); // Consommer la nouvelle ligne
+                    if (UserService.isAdmin(whitelistRequesterId)) {
+                        System.out.print("Entrez l'email à whitelister : ");
+                        String whitelistEmail = scanner.nextLine();
+                        boolean whitelisted = AuthService.whitelistEmail(whitelistEmail);
+                        System.out.println(whitelisted ? "Email whitelisted avec succès." : "Échec du whitelisting.");
+                    } else {
+                        System.out.println("Erreur : Seuls les administrateurs peuvent whitelister des emails.");
+                    }
                     break;
                 case 6:
-                    System.out.print("Entrez le nom du magasin : ");
-                    String storeName = scanner.nextLine();
-                    System.out.print("Entrez l'emplacement du magasin : ");
-                    String storeLocation = scanner.nextLine();
-                    boolean storeCreated = StoreService.createStore(storeName, storeLocation);
-                    System.out.println(storeCreated ? "Magasin créé avec succès." : "Échec de la création du magasin.");
+                    System.out.print("Entrez votre ID : ");
+                    int storeRequesterId = scanner.nextInt();
+                    scanner.nextLine(); // Consommer la nouvelle ligne
+                    if (UserService.isAdmin(storeRequesterId)) {
+                        System.out.print("Entrez le nom du magasin : ");
+                        String storeName = scanner.nextLine();
+                        System.out.print("Entrez l'emplacement du magasin : ");
+                        String storeLocation = scanner.nextLine();
+                        boolean storeCreated = StoreService.createStore(storeName, storeLocation);
+                        System.out.println(storeCreated ? "Magasin créé avec succès." : "Échec de la création du magasin.");
+                    } else {
+                        System.out.println("Erreur : Seuls les administrateurs peuvent créer des magasins.");
+                    }
                     break;
                 case 7:
-                    System.out.print("Entrez le nom de l'article : ");
-                    String itemName = scanner.nextLine();
-                    System.out.print("Entrez la quantité de l'article : ");
-                    int itemQuantity = scanner.nextInt();
-                    System.out.print("Entrez le prix de l'article : ");
-                    double itemPrice = scanner.nextDouble();
-                    boolean itemCreated = InventoryService.createItem(itemName, itemQuantity, itemPrice, currentStoreId);
-                    System.out.println(itemCreated ? "Article créé avec succès." : "Échec de la création de l'article.");
-                    currentStoreId++; // Incrémenter le storeId après chaque création d'article
+                    System.out.print("Entrez votre ID : ");
+                    int itemRequesterId = scanner.nextInt();
+                    scanner.nextLine(); // Consommer la nouvelle ligne
+                    if (UserService.isAdmin(itemRequesterId)) {
+                        System.out.print("Entrez le nom de l'article : ");
+                        String itemName = scanner.nextLine();
+                        System.out.print("Entrez la quantité de l'article : ");
+                        int itemQuantity = scanner.nextInt();
+                        System.out.print("Entrez le prix de l'article : ");
+                        double itemPrice = scanner.nextDouble();
+                        System.out.print("Entrez l'ID du magasin : ");
+                        int storeId = scanner.nextInt();
+                        boolean itemCreated = InventoryService.createItem(itemName, itemQuantity, itemPrice, storeId);
+                        System.out.println(itemCreated ? "Article créé avec succès." : "Échec de la création de l'article.");
+                    } else {
+                        System.out.println("Erreur : Seuls les administrateurs peuvent créer des articles.");
+                    }
                     break;
                 case 8:
-                    System.out.print("Entrez l'ID de l'article à supprimer : ");
-                    int itemId = scanner.nextInt();
-                    boolean itemDeleted = InventoryService.deleteItem(itemId);
-                    System.out.println(itemDeleted ? "Article supprimé avec succès." : "Échec de la suppression de l'article.");
+                    System.out.print("Entrez votre ID : ");
+                    int deleteItemRequesterId = scanner.nextInt();
+                    scanner.nextLine(); // Consommer la nouvelle ligne
+                    if (UserService.isAdmin(deleteItemRequesterId)) {
+                        System.out.print("Entrez l'ID de l'article à supprimer : ");
+                        int itemId = scanner.nextInt();
+                        boolean itemDeleted = InventoryService.deleteItem(itemId);
+                        System.out.println(itemDeleted ? "Article supprimé avec succès." : "Échec de la suppression de l'article.");
+                    } else {
+                        System.out.println("Erreur : Seuls les administrateurs peuvent supprimer des articles.");
+                    }
                     break;
                 case 9:
+                    System.out.print("Entrez l'ID du magasin : ");
+                    int inventoryStoreId = scanner.nextInt();
+                    Inventory inventory = InventoryService.getInventoryByStoreId(inventoryStoreId);
+                    System.out.println("Inventaire du magasin " + inventoryStoreId + " :");
+                    for (Item item : inventory.getItems()) {
+                        System.out.println(item);
+                    }
+                    break;
+                case 10:
+                    System.out.print("Entrez l'ID de l'article : ");
+                    int updateItemId = scanner.nextInt();
+                    System.out.print("Entrez la quantité à ajouter (ou à soustraire) : ");
+                    int quantityChange = scanner.nextInt();
+                    boolean quantityUpdated = InventoryService.updateItemQuantity(updateItemId, quantityChange);
+                    System.out.println(quantityUpdated ? "Quantité mise à jour avec succès." : "Échec de la mise à jour de la quantité.");
+                    break;
+                case 11:
                     System.out.println("Fermeture du programme.");
                     scanner.close();
                     System.exit(0);
