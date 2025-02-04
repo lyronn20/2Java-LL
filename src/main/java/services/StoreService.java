@@ -72,5 +72,6 @@ public class StoreService {
             System.err.println("Erreur lors de la récupération des employés du magasin : " + e.getMessage());
         }
         return employees;
+
     }
 }
