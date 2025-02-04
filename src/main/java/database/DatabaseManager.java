@@ -41,14 +41,5 @@ package database;
             }
 
             // Méthode pour fermer la connexion
-            public static void closeConnection() {
-                if (connection != null) {
-                    try {
-                        connection.close();
-                        System.out.println("Connexion fermée.");
-                    } catch (SQLException e) {
-                        System.err.println("Erreur lors de la fermeture de la connexion : " + e.getMessage());
-                    }
-                }
-            }
+
         }

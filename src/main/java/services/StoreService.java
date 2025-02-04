@@ -74,4 +74,24 @@ public class StoreService {
         return employees;
 
     }
-}
+
+        public static List<Store> getStores() {
+            List<Store> stores = new ArrayList<>();
+            String sql = "SELECT * FROM stores";
+            try (Connection conn = DatabaseManager.getConnection();
+                 PreparedStatement stmt = conn.prepareStatement(sql)) {
+                ResultSet rs = stmt.executeQuery();
+                while (rs.next()) {
+                    Store store = new Store(
+                            rs.getInt("id"),
+                            rs.getString("name"),
+                            rs.getString("location")
+                    );
+                    stores.add(store);
+                }
+            } catch (SQLException e) {
+                System.err.println("Erreur lors de la récupération des magasins : " + e.getMessage());
+            }
+            return stores;
+        }
+    }

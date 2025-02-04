@@ -5,12 +5,26 @@ import services.StoreService;
 import services.InventoryService;
 import models.Inventory;
 import models.Item;
+import ui.MainFrame;
+import javax.swing.SwingUtilities;
 
+
+
+import javax.swing.*;
 import java.util.List;
 import java.util.Scanner;
 
-public class Main {
-    public static void main(String[] args) {
+
+    public class Main {
+        public static void main(String[] args) {
+            SwingUtilities.invokeLater(() -> {
+                MainFrame frame = new MainFrame();
+                frame.setVisible(true);
+            });
+        }
+    }
+
+    /*public static void main(String[] args) {
         // MainApp.main(args);
 
         AuthService.createDefaultAdmin();
@@ -205,4 +219,4 @@ public class Main {
             }
         }
     }
-}
+}*/

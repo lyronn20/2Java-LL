@@ -24,12 +24,5 @@ public class Inventory {
         items.add(item);
     }
 
-    public Item getItemById(int id) {
-        for (Item item : items) {
-            if (item.getId() == id) {
-                return item;
-            }
-        }
-        return null;
-    }
+
 }

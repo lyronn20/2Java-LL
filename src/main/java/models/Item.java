@@ -17,25 +17,7 @@ public class Item {
         return id;
     }
 
-    public String getName() {
-        return name;
-    }
 
-    public double getPrice() {
-        return price;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        if (quantity >= 0) {
-            this.quantity = quantity;
-        } else {
-            throw new IllegalArgumentException("La quantité ne peut pas être inférieure à 0.");
-        }
-    }
 
     @Override
     public String toString() {
